@@ -37,6 +37,7 @@ export const getUser = createAsyncThunk("/auth/getUser",async(token,{rejectWithV
     }catch(err){
         console.log(err)
         Cookies.remove("token")
+        throw Error()
     }
 })
 
@@ -78,6 +79,26 @@ export const hostTournament = createAsyncThunk("/auth/hostTournament",async(data
     try{
         const res =await instance.post("/host-tournament",data)
         return res
+    }catch(err){
+        console.log(err)
+        throw Error()
+    }
+})
+
+export const getRoomId = createAsyncThunk("/auth/getRoomId", async()=>{
+    try{
+        const res =await instance.get("/get-room-id")
+        return res.data.roomId
+    }catch(err){
+        console.log(err)
+        throw Error()
+    }
+})
+
+export const getTournaments = createAsyncThunk("/auth/getTournaments",async(limit:number)=>{
+    try{
+        const res =await instance.get("/get-tournaments",{params:{limit}})
+        return res.data.tournaments
     }catch(err){
         console.log(err)
         throw Error()

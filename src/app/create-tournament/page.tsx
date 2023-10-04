@@ -19,6 +19,7 @@ function Page() {
     instant: false,
     date: "",
     time: "",
+    view:true,
   });
   const [instant, setInstant] = useState(false);
   const { searchUserRes,reset } = useSelector((state: any) => state.auth);
@@ -103,6 +104,18 @@ function Page() {
               <option value={"public"}>Public</option>
               <option value={"private"}>Private</option>
             </select>
+                  <label htmlFor="view" className="text-white">
+                    <input
+                      type="checkbox"
+                      id="view"
+                      placeholder="instance"
+                      className="me-2"
+                      onChange={() => {
+                        setHostDetails({...hostDetails,view:!hostDetails.view})
+                      }}
+                    />
+                    Viewers are not allowed
+                  </label>
             <label htmlFor="instant" className="text-white">
               <input
                 type="checkbox"

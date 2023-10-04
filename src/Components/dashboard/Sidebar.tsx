@@ -1,9 +1,10 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 function Sidebar() {
   const router = usePathname();
+  const navigate = useRouter()
   return (
     <div className="fixed top-16 left-3 rounded-xl bg-none flex flex-col border-[#2D2F39] border justify-between h-[calc(100vh-5rem)] w-11 ">
       <div className="w-full h-10 rounded-[0.75rem_0.75rem_0px_0px] bg-slate-500"></div>
@@ -11,6 +12,8 @@ function Sidebar() {
         <svg
           width={33}
           height={30}
+          onClick={()=>navigate.push("/dashboard")}
+
           className={
             router === "/dashboard"
               ? "bg-[#2D2F39] rounded"
@@ -30,6 +33,7 @@ function Sidebar() {
         <svg
           style={{ color: "rgb(117, 117, 117)" }}
           className={router==="/matchs" ? "bg-[#2D2F39] rounded":"bg-none hover:bg-[#383b46] duration-150 rounded"}
+          onClick={()=>navigate.push("/matchs")}
           xmlns="http://www.w3.org/2000/svg"
           width={33}
           height={30}
@@ -45,8 +49,9 @@ function Sidebar() {
         <svg
           width={33}
           height={30}
+          onClick={()=>navigate.push("/schedules")}
           className={
-            router === "/scheludes"
+            router === "/schedules"
               ? "bg-[#2D2F39] rounded"
               : "bg-none hover:bg-[#383b46] rounded"
           }
@@ -69,6 +74,7 @@ function Sidebar() {
         <svg
           width={33}
           height={30}
+          onClick={()=>navigate.push("/rank")}
           className={
             router === "/rank"
               ? "bg-[#2D2F39] rounded"
@@ -89,6 +95,7 @@ function Sidebar() {
         <svg
           width={33}
           height={30}
+          onClick={()=>navigate.push("/notification")}
           className={
             router === "/notification"
               ? "bg-[#2D2F39] rounded"
@@ -112,6 +119,7 @@ function Sidebar() {
         <svg
           width={33}
           height={30}
+          onClick={()=>navigate.push("/settings")}
           className={
             router === "/settings"
               ? "bg-[#2D2F39] rounded"

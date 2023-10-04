@@ -66,6 +66,9 @@ body {
   background: linear-gradient(to bottom right,#3C3E4C,#4f46e5);
 }
 
+.d{
+  display: contents;
+}
 
 @keyframes toaster {
   0%{

@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit"
-import { getUser, hostTournament, login, otp, resetPassword, searchUser, signup } from "./authActions"
+import { getRoomId, getTournaments, getUser, hostTournament, login, otp, resetPassword, searchUser, signup } from "./authActions"
 
 interface AuthState{
     user:any,
@@ -7,8 +7,9 @@ interface AuthState{
     error:boolean,
     otpStatus:boolean,
 token:string | null,
-reset:boolean,
+reset:boolean | number,
 searchUserRes:object[] | null[],
+tournaments:object[] | null[]
 }
 
 const initialState:AuthState = {
@@ -18,7 +19,8 @@ const initialState:AuthState = {
      otpStatus:false,
      token:null,
      reset:false,
-     searchUserRes:[]
+     searchUserRes:[],
+     tournaments : []
 }
 
 export const authSlice =  createSlice({
@@ -51,7 +53,10 @@ export const authSlice =  createSlice({
         builder.addCase(getUser.pending,(state)=>{
             state.loading = true
         })
-
+        builder.addCase(getUser.rejected,(state)=>{
+            state.loading = false
+            state.error = true
+        })
         builder.addCase(login.rejected,(state)=>{
             state.error = true
             state.loading = false
@@ -84,6 +89,9 @@ export const authSlice =  createSlice({
             state.searchUserRes=action.payload
             state.loading = false
         })
+        builder.addCase(searchUser.rejected,(state)=>{
+            state.loading = false
+        })
         builder.addCase(hostTournament.pending,(state)=>{
             state.loading = true;
         })
@@ -94,6 +102,29 @@ export const authSlice =  createSlice({
         builder.addCase(hostTournament.fulfilled,(state)=>{
             state.loading = false
             state.reset = true
+        })
+        builder.addCase(getRoomId.pending,(state)=>{
+            state.loading = true
+        })
+        builder.addCase(getRoomId.rejected,(state)=>{
+            state.loading = false
+        })
+        builder.addCase(getRoomId.fulfilled,(state,action)=>{
+            state.loading = false
+            state.reset = action.payload
+        })
+        builder.addCase(getTournaments.pending,(state)=>{
+            state.loading = true
+        })
+        builder.addCase(getTournaments.fulfilled,(state,action)=>{
+            state.loading=false
+            action.payload.map((x:any)=>{
+                state.tournaments.push(x)
+            })
+        })
+
+        builder.addCase(getTournaments.rejected,(state)=>{
+            state.loading=false
         })
        
     },

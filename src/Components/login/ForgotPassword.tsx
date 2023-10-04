@@ -32,7 +32,7 @@ function ForgotPassword({setForgot}:{setForgot:any}) {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    if(e.target[2].value>=8){
+    if(e.target[2].value?.length>=8){
 
       setData({ email: e.target[0].value, password: e.target[2].value });
       dispatch(resetPasswordOtp(e.target[0].value + ""));
@@ -79,12 +79,12 @@ function ForgotPassword({setForgot}:{setForgot:any}) {
                   New Password
                 </label>
                 <div className="text-sm">
-                    <button
+                    <p
                       onClick={()=>setForgot(false)}
                       className="font-semibold text-indigo-600 hover:text-indigo-500"
                     >
                       back to login
-                    </button>
+                    </p>
                   </div>
               </div>
               <div className="mt-2">

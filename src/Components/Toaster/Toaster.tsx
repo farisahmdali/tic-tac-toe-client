@@ -21,7 +21,6 @@ export default class Toaster extends Component<{}, ToasterState> {
     a[0].style.color = color || "black"
     setTimeout(() => {
       try{
-
         a[0].style.display = "none";
         a[0].style.color = "black"
       }catch(err){

@@ -7,6 +7,9 @@ import { Inter } from "next/font/google";
 import { Provider } from "react-redux";
 import Loading from "@/Components/Loading/Loading";
 import {useSelector} from "react-redux"
+import Sidebar from "@/Components/dashboard/Sidebar";
+import Navbar from "@/Components/dashboard/Navbar";
+import { usePathname } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,12 +23,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
+  const route = usePathname()
+const exceptRouteNavAndSide = ["/dashboard","/notification","/matchs","/settings","/schedules","/rank"]
   return (
     <html lang="en">
       <title>Tic-Tac-Toe</title>
       <Provider store={store}>
-        <body className={inter.className}><Loading/>{children}</body>
+        <body className={inter.className}><Loading/>{exceptRouteNavAndSide.includes(route) ? <><Sidebar/><Navbar/></> : null}{children}</body>
       </Provider>
     </html>
   );

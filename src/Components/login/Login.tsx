@@ -38,12 +38,12 @@ function Login({handleSubmit,forgot}:{handleSubmit:(e:React.FormEvent<HTMLFormEl
                     Password
                   </label>
                   <div className="text-sm">
-                    <button
+                    <p
                       onClick={()=>forgot(true)}
                       className="font-semibold text-indigo-600 hover:text-indigo-500"
                     >
                       Forgot password?
-                    </button>
+                    </p>
                   </div>
                 </div>
                 <div className="mt-2">
