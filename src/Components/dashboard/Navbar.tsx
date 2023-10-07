@@ -20,8 +20,10 @@ const route = useRouter()
   useEffect(() => {
     if (Cookies.get("token")) {
       dispatch(getUser());
+    }else{
+      route.replace("/")
     }
-  }, [dispatch]);
+  }, [dispatch, route]);
   return (
     <div className="fixed w-screen bg-[#00000086] h-11 flex justify-between items-center border ps-14 pe-2 border-[#2D2F39]">
       <div>

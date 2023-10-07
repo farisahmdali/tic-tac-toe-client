@@ -26,6 +26,9 @@ function Page() {
   const [otpPage, setOtp] = useState(false);
   const dispatch: any = useDispatch();
   const {error,otpStatus,token,user} = useSelector((state: any) => state.auth);
+  const reset = () =>{
+    dispatch(otp(data.email))
+  }
 
 useEffect(()=>{
 if(error){
@@ -79,7 +82,7 @@ useEffect(()=>{
   return (
     <div className="flex justify-center items-center">
       <toast.render />
-      {!otpPage ? <SignupForm handleSubmit={handleSubmit} /> : <Verification handleChange={(e)=>{setData({...data,otp:parseInt(e.target.value)})}} handleSubmit={verifySubmit} />}
+      {!otpPage ? <SignupForm handleSubmit={handleSubmit} /> : <Verification handleChange={(e)=>{setData({...data,otp:parseInt(e.target.value)})}} handleSubmit={verifySubmit} reset={reset}/>}
     </div>
   );
 }

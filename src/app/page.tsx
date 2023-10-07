@@ -29,7 +29,7 @@ export default function Home() {
   }, [token, dispatch]);
 
   useEffect(() => {
-    if (error) {
+    if (error && !forgotPassword) {
     toast.showToast("Email or Password incorrect", "red");
       dispatch(errorFalse());
     }

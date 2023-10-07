@@ -104,3 +104,14 @@ export const getTournaments = createAsyncThunk("/auth/getTournaments",async(limi
         throw Error()
     }
 })
+
+export const getOpponentsDetails = createAsyncThunk("/auth/getOpponentsDetails",async(email:string)=>{
+    try{
+        const res =await instance.get("/get-opponent-details",{params:{email}})
+        console.log(res.data)
+        return res.data.user
+    }catch(err){
+        console.log(err)
+        throw Error()
+    }
+})
