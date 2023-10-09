@@ -1,4 +1,5 @@
 "use client"
+import ToasterWithAction, { toastAction } from '@/Components/Toaster/ToasterWithAction'
 import { getOpponentsDetails } from '@/redux/features/auth/authActions'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -44,14 +45,21 @@ function Page({ params }: { params: { room: string } }) {
   useEffect(() => {
     socket.on("join-local-room", joinLocalRoom)
     socket.on("sendEmail", sendEmail)
+    socket.on("user-quit",()=>{
+      toastAction.showToast("You Won This match","green",()=>route.replace("/dashboard"),"return")
+  })
     return () => {
       socket.off("join-local-room", joinLocalRoom)
       socket.off("sendEmail", sendEmail)
+      socket.off("user-quit",()=>{
+        toastAction.showToast("You Won This match","green",()=>route.replace("/dashboard"),"return")
+    })
     }
   }, [])
 
   return (
     <div className='flex w-screen h-screen justify-center'>
+      <ToasterWithAction/>
       {<div className='flex flex-wrap self-center w-[600px]'>
         <div className='border w-1/2 p-5 rounded-[20px_0px_0px_0px]'>
           {opponent ? <>
