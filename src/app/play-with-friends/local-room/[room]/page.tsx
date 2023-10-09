@@ -78,15 +78,21 @@ function Page({ params }: { params: { room: string } }) {
         </div>
         <div className='border w-full rounded-[0px_0px_20px_20px]'>
           <h1 className='text-center mt-5'>ROOM NO : {params.room}</h1>
-
+            {opponent?.fullName ? 
           <button
           onClick={()=>{
-            route.push("/play-with-friends/start/"+params.room);
+            route.replace("/play-with-friends/start/"+params.room);
           }}
-            className=" justify-center m-2 rounded-full bg-indigo-600 px-5 float-right py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          className=" justify-center m-2 rounded-full bg-indigo-600 px-5 float-right py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Start {">"}
           </button>
+          :<button
+          
+          className=" justify-center m-2 rounded-full bg-indigo-950 px-5 float-right py-1.5 text-sm font-semibold leading-6 text-white shadow-sm"
+          >
+            Start {">"}
+          </button>}
         </div>
 
       </div>}

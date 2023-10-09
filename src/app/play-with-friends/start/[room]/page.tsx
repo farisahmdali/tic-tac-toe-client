@@ -1,9 +1,11 @@
 "use client"
 import ToasterWithAction, { toastAction } from '@/Components/Toaster/ToasterWithAction'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 function Page({ params }: { params: { room: string } }) {
+    const route = useRouter()
     const [time, setTime] = useState(10)
     const [play, setPlay] = useState<string[]>([])
     const [waiting, setWaiting] = useState(false)
@@ -44,6 +46,17 @@ const winning = () => {
                 setScore(score + 1)
                 socket.emit("i-won-local-match")
             }
+        }
+
+        if(play[0]&&play[1]&&play[2]&&play[3]&&play[4]&&play[5]&&play[6]&&play[7]&&play[8]){
+            toastAction.showToast(`This Round draw`, `#fc7303`, () => {
+                socket.emit("next-round-local")
+                setRounde(round + 1)
+                setStopTime(false)
+                setPlay([""])
+            }, `next round`)
+
+            socket.emit("draw-local")
         }
     }
     const handleClick = (index: number) => {
@@ -116,6 +129,36 @@ const winning = () => {
             setStopTime(false)
             setPlay([""])
         })
+        socket.on("local-game-finished",()=>{
+            if(score>opponentScore){
+                toastAction.showToast("You Won This match","green",()=>route.replace("/dashboard"),"return")
+            }else if(score<opponentScore){
+                toastAction.showToast("You loose This match","red",()=>route.replace("/dashboard"),"return")
+            }else{
+                toastAction.showToast("This match is draw","#fc7303",()=>route.replace("/dashboard"),"return")
+            }
+            socket.emit("local-game-finished")
+        })
+        socket.on("local-game-finished-end",()=>{
+            if(score>opponentScore){
+                toastAction.showToast("You Won This match","green",()=>route.replace("/dashboard"),"return")
+            }else if(score<opponentScore){
+                toastAction.showToast("You loose This match","red",()=>route.replace("/dashboard"),"return")
+            }else{
+                toastAction.showToast("This match is draw","#fc7303",()=>route.replace("/dashboard"),"return")
+            }
+        })
+        socket.on("draw-local",()=>{
+            toastAction.showToast(`This Round draw`, `#fc7303`, () => {
+                socket.emit("next-round-local")
+                setRounde(round + 1)
+                setStopTime(false)
+                setPlay([""])
+            }, `next round`)
+        })
+        socket.on("user-quit",()=>{
+            toastAction.showToast("You Won This match","green",()=>route.replace("/dashboard"),"return")
+        })
 
         return () => {
             socket.off("next-round-local", (data: { round: number, current: string }) => {
@@ -153,11 +196,15 @@ const winning = () => {
             }, `next round`)
             setStopTime(true)
             })
+
+            socket.off("user-quit",()=>{
+                toastAction.showToast("You Won This match The User Quit The Match","green",()=>route.replace("/dashboard"),"return")
+            })
         }
     }, [currentPlayer, opponentScore, round, socket, user?.fullName])
 
     return (
-        <div className='h-screen w-screen'>
+        <div className='h-screen w-screen flex justify-center items-center'>
             <ToasterWithAction />
             {!waiting ? <h1 className='self-center'>waiting for the opponent</h1> :
                 <>
