@@ -24,13 +24,13 @@ function Page() {
   const [instant, setInstant] = useState(false);
   const { searchUserRes,reset } = useSelector((state: any) => state.auth);
   const dispatch: any = useDispatch();
-  useEffect(()=>{
-    if(reset){
-      toast.showToast("Created Tournament Successfully","green")
-      setTimeout(()=>router.replace("/dashboard") ,2000)
-      dispatch(resetFalse())
-    }
-  },[dispatch, reset, router])
+  // useEffect(()=>{
+  //   if(reset){
+  //     toast.showToast("Created Tournament Successfully","green")
+  //     setTimeout(()=>router.replace("/dashboard") ,2000)
+  //     dispatch(resetFalse())
+  //   }
+  // },[dispatch, reset, router])
 
   useEffect(() => {
     dispatch(searchUser(search));
@@ -42,7 +42,16 @@ function Page() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(hostDetails);
-    dispatch(hostTournament(hostDetails));
+    const res = dispatch(hostTournament(hostDetails));
+    res.then((res:any)=>{
+        if(hostDetails?.instant){
+          console.log(res)
+        router.replace("/tournament/"+hostDetails?.type+"/"+res.payload)
+      }else{
+        toast.showToast("Created Tournament Successfully","green")
+      setTimeout(()=>router.replace("/dashboard") ,2000)
+      }
+      })
   };
 
   return (

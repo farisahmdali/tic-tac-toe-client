@@ -78,7 +78,7 @@ export const searchUser = createAsyncThunk("/auth/searchUser",async(word:string)
 export const hostTournament = createAsyncThunk("/auth/hostTournament",async(data:any)=>{
     try{
         const res =await instance.post("/host-tournament",data)
-        return res
+        return res.data
     }catch(err){
         console.log(err)
         throw Error()
@@ -110,6 +110,37 @@ export const getOpponentsDetails = createAsyncThunk("/auth/getOpponentsDetails",
         const res =await instance.get("/get-opponent-details",{params:{email}})
         console.log(res.data)
         return res.data.user
+    }catch(err){
+        console.log(err)
+        throw Error()
+    }
+})
+
+export const getMyTournaments = createAsyncThunk("/auth/getMyTournaments",async()=>{
+    try{
+        const res =await instance.get("/get-my-tournaments")
+        console.log(res.data)
+        return res.data
+    }catch(err){
+        console.log(err)
+        throw Error()
+    }
+})
+
+export const saveTournaments = createAsyncThunk("/auth/saveTournaments",async(tournamentId:string)=>{
+    try{
+        const res =await instance.post("/save-tournaments",{tournamentId})
+        return res.data
+    }catch(err){
+        console.log(err)
+        throw Error()
+    }
+})
+
+export const getTournamentsDetails=createAsyncThunk("/auth/getTournamentsDetails",async(tournamentId:string)=>{
+    try{
+        const res =await instance.get("/get-tournament-details",{params:{tournamentId}})
+        return res.data
     }catch(err){
         console.log(err)
         throw Error()

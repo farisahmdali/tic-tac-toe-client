@@ -29,13 +29,16 @@ const initialState: AuthState = {
 export const authSlice = createSlice({
     name: "auth",
     initialState,
-    reducers: {
+    reducers: {       
         errorFalse: (state) => {
             state.error = false
         },
 
         resetFalse: (state) => {
             state.reset = false
+        },
+        resetTournament:(state)=>{
+            state.tournaments=[]
         }
     },
     extraReducers: (builder) => {
@@ -133,4 +136,4 @@ export const authSlice = createSlice({
     },
 })
 
-export const { errorFalse, resetFalse } = authSlice.actions
+export const { errorFalse, resetFalse,resetTournament } = authSlice.actions

@@ -2,17 +2,21 @@
 import Cards from "@/Components/dashboard/Cards";
 import Navbar from "@/Components/dashboard/Navbar";
 import Sidebar from "@/Components/dashboard/Sidebar";
-import { getTournaments } from "@/redux/features/auth/authActions";
+import { getTournaments, saveTournaments } from "@/redux/features/auth/authActions";
+import { resetTournament } from "@/redux/features/auth/authSlice";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 function Dashboard() {
   const dispatch: any = useDispatch();
   const [limit,setLimit] = useState(0)
+  const router = useRouter()
   const {tournaments} = useSelector((state:any)=>state.auth)
   useEffect(()=>{
+    dispatch(resetTournament())
     dispatch(getTournaments(limit));
-    setLimit(limit+50)
+    setLimit(tournaments?.length+50)
   },[])
 
   console.log(tournaments);
@@ -26,7 +30,17 @@ function Dashboard() {
         {tournaments.map((x:any,index:number)=>(
           // eslint-disable-next-line react/jsx-key
           <div>
-            <Cards val={x} key={index}/>
+            <Cards val={x} key={index} handleClick={()=>{
+              let res = dispatch(saveTournaments(x._id))
+              res.then(async ()=>{
+               await dispatch(resetTournament())
+                dispatch(getTournaments(0));
+              })
+            }} 
+            handleClickPlay={()=>{
+              router.push("/tournament/"+x?.type+"/"+x?._id)
+            }}
+            />
           </div>
         ))}
         

@@ -45,21 +45,21 @@ function Page({ params }: { params: { room: string } }) {
   useEffect(() => {
     socket.on("join-local-room", joinLocalRoom)
     socket.on("sendEmail", sendEmail)
-    socket.on("user-quit",()=>{
-      toastAction.showToast("You Won This match","green",()=>route.replace("/dashboard"),"return")
-  })
+    socket.on("user-quit", () => {
+      toastAction.showToast("You Won This match", "green", () => route.replace("/dashboard"), "return")
+    })
     return () => {
       socket.off("join-local-room", joinLocalRoom)
       socket.off("sendEmail", sendEmail)
-      socket.off("user-quit",()=>{
-        toastAction.showToast("You Won This match","green",()=>route.replace("/dashboard"),"return")
-    })
+      socket.off("user-quit", () => {
+        toastAction.showToast("You Won This match", "green", () => route.replace("/dashboard"), "return")
+      })
     }
   }, [])
 
   return (
     <div className='flex w-screen h-screen justify-center'>
-      <ToasterWithAction/>
+      <ToasterWithAction />
       {<div className='flex flex-wrap self-center w-[600px]'>
         <div className='border w-1/2 p-5 rounded-[20px_0px_0px_0px]'>
           {opponent ? <>
@@ -86,21 +86,21 @@ function Page({ params }: { params: { room: string } }) {
         </div>
         <div className='border w-full rounded-[0px_0px_20px_20px]'>
           <h1 className='text-center mt-5'>ROOM NO : {params.room}</h1>
-            {opponent?.fullName ? 
-          <button
-          onClick={()=>{
-            route.replace("/play-with-friends/start/"+params.room);
-          }}
-          className=" justify-center m-2 rounded-full bg-indigo-600 px-5 float-right py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Start {">"}
-          </button>
-          :<button
-          
-          className=" justify-center m-2 rounded-full bg-indigo-950 px-5 float-right py-1.5 text-sm font-semibold leading-6 text-white shadow-sm"
-          >
-            Start {">"}
-          </button>}
+          {opponent?.fullName ?
+            <button
+              onClick={() => {
+                route.replace("/play-with-friends/start/" + params.room);
+              }}
+              className=" justify-center m-2 rounded-full bg-indigo-600 px-5 float-right py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Start {">"}
+            </button>
+            : <button
+
+              className=" justify-center m-2 rounded-full bg-indigo-950 px-5 float-right py-1.5 text-sm font-semibold leading-6 text-white shadow-sm"
+            >
+              Start {">"}
+            </button>}
         </div>
 
       </div>}

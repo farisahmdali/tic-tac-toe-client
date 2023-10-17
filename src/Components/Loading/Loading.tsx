@@ -1,10 +1,29 @@
 "use client";
-import React from "react";
+import React,{useEffect} from "react";
 import "./Loading.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import { errorFalse } from "@/redux/features/auth/authSlice";
+import { getUser } from "@/redux/features/auth/authActions";
+import Cookies from "js-cookie";
 
 function Loading() {
-  const { loading } = useSelector((state: any) => state.auth);
+  const { loading,error,user } = useSelector((state: any) => state.auth);
+  const dispatch: any = useDispatch();
+const route = useRouter()
+  useEffect(()=>{
+    if(error){
+      route.replace("/")
+      dispatch(errorFalse())
+    }
+  },[])
+  useEffect(() => {
+    if (Cookies.get("token") && !user) {
+      dispatch(getUser());
+    }else{
+      route.replace("/")
+    }
+  }, [dispatch, route]);
   return (
     <>
       {loading ? (
