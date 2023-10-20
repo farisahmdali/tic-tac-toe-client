@@ -1,32 +1,41 @@
 "use client"
-import { getOpponentsDetails } from "@/redux/features/auth/authActions";
+import { getOpponentsDetails, getTournamentsDetails } from "@/redux/features/auth/authActions";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Toaster, { toast } from "../Toaster/Toaster";
 
 function Player4({ id }: { id: string }) {
     const { socket, user } = useSelector((state: any) => state?.auth)
     const [time, setTime] = useState(10);
-    const [state, setState] = useState(false);
+    const [state, setState] = useState(true);
+    const [details, setDetails] = useState<any>()
     const dispatch: any = useDispatch()
     const router = useRouter()
+    const [usersOnline, setUsersOnline] = useState<string[]>([])
     const [opponent, setOpponent] = useState<any>()
     const [matchs, setMatchs] = useState<any>([])
+    const [gameDetails, setGameDetails] = useState<any>()
 
     useEffect(() => {
-        if (time > 0) {
+        if (time > 0 && usersOnline?.length >= details?.joined?.length) {
             const interval = setInterval(() => setTime(time - 1), 1000)
             return () => clearInterval(interval)
-        } else {
-            router.replace("/tournament/start/"+id)
+        } else if (usersOnline?.length >= details?.joined?.length) {
+            router.replace("/tournament/start/" + id)
+            socket.emit("user-offline")
             setTime(10)
         }
-    }, [id, router, time])
+    }, [id, matchs, router, socket, time, usersOnline,details])
+
+    useEffect(() => { socket.emit("user-online", {}, (data: any) => { setUsersOnline(data) }) }, [socket])
+
     useEffect(() => {
-        socket.emit("get-matchs-tournament", {}, (data: any) => {
+
+        socket.emit("get-matchs-tournament", {}, ([...data]:any) => {
             if (data) {
-                setMatchs(data)
                 console.log(data)
+                setMatchs([...data])
                 for (let i = 0; i < data?.length; i++) {
                     if (data[i][0].email === user.email) {
                         let res = dispatch(getOpponentsDetails(data[i][0].email))
@@ -50,26 +59,98 @@ function Player4({ id }: { id: string }) {
                 window.history.back()
             }
         })
-    }, [socket])
+    }, [dispatch, socket, user,usersOnline])
+
+    useEffect(() => {
+        const res = dispatch(getTournamentsDetails(id))
+        res.then((x: any) => {
+            console.log(x)
+            setDetails(x?.payload)
+        })
+    }, [dispatch, id,usersOnline])
+
+    const userOnline = useCallback((data: any) => {
+        setUsersOnline(data)
+        return
+    }, [])
+
+const loser = useCallback(()=>{
+    socket.emit("user-offline")
+    toast.showToast("Your Loose this match !" , "red")
+    setTimeout(()=>router.replace("/dashboad"),2000)
+},[router, socket])
 
     
+
+    useEffect(() => {
+        socket.on("user-online", userOnline)
+        socket.on("loser",loser)
+        return () => {
+            socket.off("user-online", userOnline)
+            socket.off("loser",loser)
+        }
+    }, [socket, userOnline])
+
+    useEffect(() => {
+            // socket.emit("game-rearange")
+    }, [matchs, socket, usersOnline])
+
+
 
 
 
     return (<div className="w-[100vw] h-screen flex flex-col justify-center items-center">
-            {state ? <button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 right-2 rounded" onClick={()=>setState(!state)}>Your Match</button>:<button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 right-2 rounded" onClick={()=>setState(!state)}>Tournament Matchs</button>}
+        <Toaster/>
+        {state ? <button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 right-2 rounded" onClick={() => setState(!state)}>Your Match</button> : <button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 right-2 rounded" onClick={() => setState(!state)}>Tournament Matchs</button>}
+
         {state ? <div>
-            <button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 left-2 rounded">{time}</button>
-            {matchs?.map((x: any) => (
-                <div className="w-[500px] flex justify-between items-center" key={x}>
-                <div className="bg-indigo-700 px-6 py-3  rounded">
-                    <h1>{x[0]?.fullName}</h1>
-                </div>
-                <h1>VS</h1>
-                <div className="bg-indigo-700 px-6 py-3  rounded">
-                    <h1>{x[1]?.fullName}</h1>
-                </div>
+
+            <div className="relative overflow-x-auto">
+                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" className="px-6 py-3">
+                                Users
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Score
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Status
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {details?.joined?.map((x: any, index: number) => (
+                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700" key={index}>
+                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {x?.fullName}
+                                </th>
+                                <td className="px-6 py-4">
+                                    {x?.score || 0}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {usersOnline.includes(x?.email) ? "Ready" : "Not Ready"}
+                                </td>
+                            </tr>
+                        ))}
+
+                    </tbody>
+                </table>
             </div>
+
+
+            <button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 left-2 rounded">{time}</button>
+            {matchs?.map((x: any,i:number) => (
+                <div className="w-[500px] flex justify-between items-center" key={i}>
+                    <div className="bg-indigo-700 px-6 py-3  rounded">
+                        <h1>{x[0]?.fullName}</h1>
+                    </div>
+                    <h1>VS</h1>
+                    <div className="bg-indigo-700 px-6 py-3  rounded">
+                        <h1>{x[1]?.fullName}</h1>
+                    </div>
+                </div>
             ))}
         </div> :
             <div className="border w-[500px] h-[400px] rounded-xl">
