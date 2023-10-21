@@ -8,7 +8,7 @@ import Toaster, { toast } from "../Toaster/Toaster";
 function Player4({ id }: { id: string }) {
     const { socket, user } = useSelector((state: any) => state?.auth)
     const [time, setTime] = useState(10);
-    const [state, setState] = useState(true);
+    const [state, setState] = useState(false);
     const [details, setDetails] = useState<any>()
     const dispatch: any = useDispatch()
     const router = useRouter()
@@ -16,24 +16,53 @@ function Player4({ id }: { id: string }) {
     const [opponent, setOpponent] = useState<any>()
     const [matchs, setMatchs] = useState<any>([])
     const [gameDetails, setGameDetails] = useState<any>()
+    const [reachedFinal, setReachedFinal] = useState(false)
 
     useEffect(() => {
-        if (time > 0 && usersOnline?.length >= details?.joined?.length) {
+        if (time > 0 && usersOnline?.length >= details?.joined?.length && !reachedFinal) {
             const interval = setInterval(() => setTime(time - 1), 1000)
             return () => clearInterval(interval)
-        } else if (usersOnline?.length >= details?.joined?.length) {
-            router.replace("/tournament/start/" + id)
+        } else if (usersOnline?.length >= details?.joined?.length && !reachedFinal) {
+            socket.emit("make-tournament-condition-false")
             socket.emit("user-offline")
+            router.replace("/tournament/start/" + id)
             setTime(10)
+        } else {
+            setTime(10)
+            console.log(usersOnline);
+            
         }
-    }, [id, matchs, router, socket, time, usersOnline,details])
-
-    useEffect(() => { socket.emit("user-online", {}, (data: any) => { setUsersOnline(data) }) }, [socket])
+    }, [id, matchs, router, socket, time, usersOnline, details, reachedFinal])
 
     useEffect(() => {
+        socket.emit("user-online", {}, (data: any) => { setUsersOnline(data) })
+        if (usersOnline?.length < details?.joined?.length) {
+            
+            setTimeout(() => socket.emit("user-online", {}, (data: any) => { setUsersOnline(data) }), 2000)
+        }
+    }, [socket])
+    useEffect(() => {
 
-        socket.emit("get-matchs-tournament", {}, ([...data]:any) => {
-            if (data) {
+        socket.emit("get-matchs-tournament", {}, (data: any) => {
+            console.log(data)
+            if (data === "final") {
+                console.log(data)
+                setReachedFinal(true)
+                toast.showToast("Your in Final Round !", "green")
+            } else if (data === "loser") {
+                toast.showToast("Your Loose this match !", "red")
+                socket.emit("user-offline")
+                setTimeout(() => router.replace("/dashboard"), 2000)
+            } else if (data === "You Got First Price" || data === "You Got Second Price") {
+                toast.showToast(data, "green")
+                socket.emit("user-offline")
+                setTimeout(() => router.replace("/dashboard"), 2000)
+            }else if(data==="final round"){
+                setMatchs([details?.final])
+            }
+
+
+            else if (data) {
                 console.log(data)
                 setMatchs([...data])
                 for (let i = 0; i < data?.length; i++) {
@@ -43,56 +72,63 @@ function Player4({ id }: { id: string }) {
                             console.log(res)
                             setOpponent(res?.payload)
                             socket.emit("start-tournament")
+                            setReachedFinal(false)
                         })
                         break
-                    } else if (data[i][1].email === user.email) {
-                        let res = dispatch(getOpponentsDetails(data[i][1].email))
+                    } else if (data[i][1]?.email === user?.email) {
+                        let res = dispatch(getOpponentsDetails(data[i][1]?.email))
                         res.then((res: any) => {
                             console.log(res)
                             setOpponent(res?.payload)
                             socket.emit("start-tournament")
+                            setReachedFinal(false)
                         })
                         break
                     }
                 }
-            } else {
-                window.history.back()
             }
         })
-    }, [dispatch, socket, user,usersOnline])
+    }, [dispatch, router, socket, user, usersOnline,details])
 
     useEffect(() => {
         const res = dispatch(getTournamentsDetails(id))
         res.then((x: any) => {
-            console.log(x)
             setDetails(x?.payload)
+            console.log(x)
         })
-    }, [dispatch, id,usersOnline])
+    }, [dispatch, id, usersOnline])
 
     const userOnline = useCallback((data: any) => {
         setUsersOnline(data)
         return
     }, [])
 
-const loser = useCallback(()=>{
-    socket.emit("user-offline")
-    toast.showToast("Your Loose this match !" , "red")
-    setTimeout(()=>router.replace("/dashboad"),2000)
-},[router, socket])
+    const loser = useCallback(() => {
+        toast.showToast("Your Loose this match !", "red")
+        socket.emit("user-offline")
+        setTimeout(() => router.replace("/dashboad"), 2000)
+    }, [router, socket])
 
-    
+    const final = useCallback(() => {
+        toast.showToast("Your in Final Round !", "green")
+        console.log("++++++++++++++++++++++++++++")
+        setReachedFinal(false)
+    }, [])
+
 
     useEffect(() => {
         socket.on("user-online", userOnline)
-        socket.on("loser",loser)
+        socket.on("loser", loser)
+        socket.on("final", final)
         return () => {
             socket.off("user-online", userOnline)
-            socket.off("loser",loser)
+            socket.off("loser", loser)
+            socket.off("final", final)
         }
-    }, [socket, userOnline])
+    }, [final, loser, socket, userOnline])
 
     useEffect(() => {
-            // socket.emit("game-rearange")
+        // socket.emit("game-rearange")
     }, [matchs, socket, usersOnline])
 
 
@@ -100,8 +136,8 @@ const loser = useCallback(()=>{
 
 
     return (<div className="w-[100vw] h-screen flex flex-col justify-center items-center">
-        <Toaster/>
-        {state ? <button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 right-2 rounded" onClick={() => setState(!state)}>Your Match</button> : <button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 right-2 rounded" onClick={() => setState(!state)}>Tournament Matchs</button>}
+        <Toaster />
+        {state ? <button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 right-2 rounded" onClick={() => setState(!state)}>Your Match</button> : <button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 right-2 rounded" onClick={() => setState(!state)}>Tournament Info</button>}
 
         {state ? <div>
 
@@ -141,17 +177,7 @@ const loser = useCallback(()=>{
 
 
             <button className="bg-indigo-700 px-6 py-3 text-sm absolute top-2 left-2 rounded">{time}</button>
-            {matchs?.map((x: any,i:number) => (
-                <div className="w-[500px] flex justify-between items-center" key={i}>
-                    <div className="bg-indigo-700 px-6 py-3  rounded">
-                        <h1>{x[0]?.fullName}</h1>
-                    </div>
-                    <h1>VS</h1>
-                    <div className="bg-indigo-700 px-6 py-3  rounded">
-                        <h1>{x[1]?.fullName}</h1>
-                    </div>
-                </div>
-            ))}
+            
         </div> :
             <div className="border w-[500px] h-[400px] rounded-xl">
                 <div className="flex">

@@ -134,6 +134,7 @@ function Page({ params }: { params: { id: string } }) {
             toastAction.showToast("You Loose this Match", "red", () => {
                 setStopTime(false)
                 socket.emit("leave-tournament-group")
+                setWaiting(false)
                 route.replace("/tournament/play/"+params.id)
                 console.log("i won")
             }, "Next Match")
@@ -142,6 +143,7 @@ function Page({ params }: { params: { id: string } }) {
             toastAction.showToast("You Win this Match", "green", () => {
             setStopTime(false)
             socket.emit("leave-tournament-group")
+            setWaiting(false)
             route.replace("/tournament/play/"+params.id)
             console.log("i won")
         }, "Next Match")
@@ -156,7 +158,7 @@ function Page({ params }: { params: { id: string } }) {
         socket.emit("round-finished",{email:data})
         setStopTime(true)
         
-    }, [opponent?.email, opponentScore, round, score, socket, user?.email])
+    }, [opponent?.email, opponentScore, params.id, round, route, score, socket, user?.email])
 
     const goldenGame = useCallback(() => {
         setStopTime(true)
@@ -182,6 +184,7 @@ function Page({ params }: { params: { id: string } }) {
         if (opponentScore > score) {
             toastAction.showToast("You Loose this Match", "red", () => {
                 setStopTime(false)
+                setWaiting(false)
                 socket.emit("leave-tournament-group")
                 route.replace("/tournament/play/"+params.id)
                 console.log("i won")
@@ -189,6 +192,7 @@ function Page({ params }: { params: { id: string } }) {
         } else if (score > opponentScore) {
             toastAction.showToast("You Win this Match", "green", () => {
             setStopTime(false)
+            setWaiting(false)
             socket.emit("leave-tournament-group")
             route.replace("/tournament/play/"+params.id)
             console.log("i won")
@@ -200,7 +204,7 @@ function Page({ params }: { params: { id: string } }) {
                 console.log("i won")
             }, "Next Match")
         }
-    }, [opponentScore, params.id, route, score])
+    }, [opponentScore, params.id, route, score, socket])
 
     useEffect(() => {
         socket.on("playing", playing)
