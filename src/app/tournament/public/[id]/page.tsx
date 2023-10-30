@@ -57,7 +57,10 @@ function Page({ params }: { params: { id: string } }) {
 
             socket.emit("join-tournament-public", { user: { fullName: user?.fullName, email: user?.email, _id: user?._id }, room: params.id }, (data: any) => {
                 console.log(data, "hello");
-                setPlayers(data)
+                if(data!=="cannot join"){
+                    setPlayers(data)
+                }
+                
             })
         }
     }, [dispatch, params.id, socket, user])

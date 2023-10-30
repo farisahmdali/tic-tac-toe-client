@@ -13,7 +13,7 @@ function Page() {
             }
             console.log(data)
         });
-    }, [socket])
+    }, [router, socket])
 
     useEffect(()=>{
         socket.on("random",(data:any)=>{
@@ -30,7 +30,7 @@ function Page() {
                 console.log(data)
             })
         }
-    },[])
+    },[router, socket])
     return <div className="h-screen w-screen flex flex-col pb-[50vh] justify-between">
         <button className="absolute bg-red-600 rounded top-1 left-1 px-5 py-3" onClick={()=>{
             router.replace("/dashboard")

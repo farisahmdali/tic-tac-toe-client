@@ -17,7 +17,6 @@ function Loading() {
     const permission = await Notification.requestPermission()
     if (permission === "granted") {
     const token = await getToken(msg,{vapidKey:"BL1BJgUz91cE-RTaHh9NcgGc97RqiCGWLJxmt6d8jflu_F1gVShjh_fv9h0pqrEVOEIYMcwGHzBzVLiP27RfEhs"})
-    console.log(token)
     instance.post("/addNotification",{nId:token})
     }
   }

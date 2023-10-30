@@ -16,7 +16,7 @@ function Page() {
       console.log(res)
       setTournament(res.payload.user)
     })
-  }, [])
+  }, [dispatch])
   return (
     <div className='pt-14 ps-20 pe-5'>
       <div className='h-[calc(100vh-5rem)] w-[calc(100vw-3.5rem-400px)] p-3 float-left  border'>

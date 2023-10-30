@@ -1,12 +1,9 @@
-"use client";
-
 import store from "@/redux/store";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Provider } from "react-redux";
 import Loading from "@/Components/Loading/Loading";
-
 import Sidebar from "@/Components/dashboard/Sidebar";
 import Navbar from "@/Components/dashboard/Navbar";
 import { usePathname } from "next/navigation";

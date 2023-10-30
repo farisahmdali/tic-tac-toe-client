@@ -127,7 +127,7 @@ export const authSlice = createSlice({
         })
         builder.addCase(getTournaments.fulfilled, (state, action) => {
             state.loading = false
-            action.payload.map((x: any) => {
+            action.payload.map((x:never) => {
                 state.tournaments.push(x)
             })
         })
