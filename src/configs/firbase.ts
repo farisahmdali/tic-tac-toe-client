@@ -1,3 +1,4 @@
+"use client"
 import { initializeApp } from "firebase/app";
 import {getMessaging} from "firebase/messaging"
 const firebaseConfig = {
