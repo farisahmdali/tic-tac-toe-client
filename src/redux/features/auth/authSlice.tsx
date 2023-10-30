@@ -23,7 +23,7 @@ const initialState: AuthState = {
     reset: false,
     searchUserRes: [],
     tournaments: [],
-    socket: io("http://localhost:8080")
+    socket: io(process.env.NEXT_PUBLIC_API_BASE_URL+"")
 }
 
 export const authSlice = createSlice({
@@ -39,7 +39,10 @@ export const authSlice = createSlice({
         },
         resetTournament:(state)=>{
             state.tournaments=[]
-        }
+        },
+        setTournament:(state,action)=>{
+            state.tournaments=action.payload
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(otp.rejected, (state, action) => {
@@ -136,4 +139,4 @@ export const authSlice = createSlice({
     },
 })
 
-export const { errorFalse, resetFalse,resetTournament } = authSlice.actions
+export const { errorFalse, resetFalse,resetTournament,setTournament } = authSlice.actions

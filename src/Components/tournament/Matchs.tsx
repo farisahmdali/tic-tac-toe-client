@@ -66,7 +66,7 @@ function Player4({ id }: { id: string }) {
                 console.log(data)
                 setMatchs([...data])
                 for (let i = 0; i < data?.length; i++) {
-                    if (data[i][0].email === user.email) {
+                    if (data[i][0]?.email === user.email) {
                         let res = dispatch(getOpponentsDetails(data[i][0].email))
                         res.then((res: any) => {
                             console.log(res)

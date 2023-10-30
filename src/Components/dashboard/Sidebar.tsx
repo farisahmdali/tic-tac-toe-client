@@ -2,16 +2,35 @@
 import { usePathname, useRouter } from "next/navigation";
 import React,{useEffect} from "react";
 import { useSelector } from "react-redux";
+import ToasterYesorNo, { toastOption } from "../Toaster/ToasterYesorNo";
 
 function Sidebar() {
-  const {socket} = useSelector((state:any)=>state?.auth)
+  const {socket,user} = useSelector((state:any)=>state?.auth)
   const router = usePathname();
   const navigate = useRouter()
   useEffect(()=>{
-    socket.emit("userExited")
-  },[socket])
+    socket.emit("userExited",user?.email)
+  },[socket,user])
+
+  useEffect(()=>{
+    socket.on("challenge",({link,user}:{link:string,user:string})=>{
+      toastOption.showToast("Your Challenged By "+user,"green",()=>{
+        navigate.push(link)
+
+      })
+    })
+    return ()=>{
+      socket.off("challenge",({link,user}:{link:string,user:string})=>{
+        toastOption.showToast("Your Challenged By "+user,"green",()=>{
+          navigate.push(link)
+  
+        })
+      })
+    }
+  },[navigate, socket])
   return (
-    <div className="fixed top-16 left-3 rounded-xl bg-none flex flex-col border-[#2D2F39] border justify-between h-[calc(100vh-5rem)] w-11 ">
+    <div className="fixed top-16 left-3 z-10 rounded-xl bg-none flex flex-col border-[#2D2F39] border justify-between h-[calc(100vh-5rem)] w-11 ">
+     <ToasterYesorNo/>
       <div className="w-full h-10 rounded-[0.75rem_0.75rem_0px_0px] bg-slate-500"></div>
       <div className="h-[calc(100%-5rem)] flex flex-col items-center pt-3">
         <svg
@@ -72,30 +91,7 @@ function Sidebar() {
           />
         </svg>
         <h5 className="text-[7px] mt-3">SETTINGS</h5>
-        <svg
-          width={33}
-          height={30}
-          onClick={()=>navigate.push("/notification")}
-          className={
-            router === "/notification"
-              ? "bg-[#2D2F39] rounded"
-              : "bg-none hover:bg-[#383b46] duration-150 rounded"
-          }
-          viewBox="0 0 44 40"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M21.9984 10.8325C20.4336 10.8325 18.9445 11.496 17.8547 12.6584C16.7673 13.8182 16.1651 15.3808 16.1651 16.9992C16.1651 19.9962 15.5638 21.8633 15.0065 22.9532C14.727 23.4997 14.4549 23.8582 14.266 24.0708C14.1714 24.1774 14.097 24.248 14.0523 24.2878C14.0299 24.3077 14.0148 24.3199 14.0083 24.3251L14.0059 24.327C13.7173 24.5384 13.5955 24.911 13.7046 25.2526C13.8149 25.5981 14.1358 25.8325 14.4984 25.8325H29.4984C29.861 25.8325 30.182 25.5981 30.2923 25.2526C30.4014 24.911 30.2796 24.5384 29.991 24.327L29.9885 24.3251C29.982 24.3199 29.967 24.3077 29.9446 24.2878C29.8999 24.248 29.8255 24.1774 29.7309 24.0708C29.542 23.8582 29.2699 23.4997 28.9904 22.9532C28.433 21.8633 27.8318 19.9962 27.8318 16.9992C27.8318 15.3808 27.2296 13.8182 26.1422 12.6584C25.0526 11.4972 23.5627 10.8325 21.9984 10.8325ZM14.0059 24.327L14.0083 24.3251L14.0059 24.327ZM14.0083 24.3251L14.0051 24.3276L14.0083 24.3251ZM27.5065 23.712C27.5897 23.8748 27.6733 24.0258 27.7563 24.1659H16.2406C16.3235 24.0258 16.4072 23.8748 16.4904 23.712C17.183 22.3576 17.8318 20.2246 17.8318 16.9992C17.8318 15.7892 18.2829 14.6385 19.0705 13.7983C19.8574 12.9591 20.9116 12.4992 21.9984 12.4992C23.0841 12.4992 24.1392 12.9596 24.9263 13.7983L26.2165 18.525C26.383 20.9153 26.9295 22.5837 27.5065 23.712ZM26.2165 18.525C26.1832 18.0461 26.1651 17.5376 26.1651 16.9992C26.1651 15.7894 25.7138 14.6384 24.9263 13.7983L26.2165 18.525Z"
-            fill="#8A8C91"
-          />
-          <path
-            d="M21.278 27.0817C21.0474 26.6834 20.5375 26.5474 20.1392 26.778C19.7409 27.0086 19.605 27.5184 19.8356 27.9167C20.0551 28.2959 20.3705 28.6108 20.7501 28.8296C21.1297 29.0485 21.5602 29.1637 21.9984 29.1637C22.4366 29.1637 22.8671 29.0485 23.2467 28.8296C23.6264 28.6108 23.9417 28.2959 24.1613 27.9167C24.3919 27.5184 24.2559 27.0086 23.8576 26.778C23.4593 26.5474 22.9495 26.6834 22.7189 27.0817C22.6458 27.208 22.5407 27.3129 22.4143 27.3858C22.2878 27.4587 22.1444 27.4971 21.9984 27.4971C21.8525 27.4971 21.7091 27.4587 21.5826 27.3858C21.4562 27.3129 21.3511 27.208 21.278 27.0817Z"
-            fill="#8A8C91"
-          />
-        </svg>
+        
         <svg
           width={33}
           height={30}

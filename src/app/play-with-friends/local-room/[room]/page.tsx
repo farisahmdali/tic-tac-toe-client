@@ -1,8 +1,9 @@
 "use client"
 import ToasterWithAction, { toastAction } from '@/Components/Toaster/ToasterWithAction'
+import Challengecard from '@/Components/play-with-friends/Challengecard'
 import { getOpponentsDetails } from '@/redux/features/auth/authActions'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 function Page({ params }: { params: { room: string } }) {
@@ -13,7 +14,7 @@ function Page({ params }: { params: { room: string } }) {
   const route = useRouter()
 
   //socket function ******************************************
-  const joinLocalRoom = (data: any) => {
+  const joinLocalRoom = useCallback((data: any) => {
     console.log(data)
     let res = dispatch(getOpponentsDetails(data.user))
     res.then((res: any) => {
@@ -22,9 +23,9 @@ function Page({ params }: { params: { room: string } }) {
     })
     socket.emit("sendEmail", { room: params.room, user: user?.email })
 
-  }
+  }, [])
 
-  const sendEmail = (data: any) => {
+  const sendEmail = useCallback((data: any) => {
     console.log(data)
     let res = dispatch(getOpponentsDetails(data.user))
     res.then((res: any) => {
@@ -32,15 +33,17 @@ function Page({ params }: { params: { room: string } }) {
       setOpponent(res?.payload)
     })
 
-  }
+  }, [])
 
 
 
 
   //useEffects
   useEffect(() => {
-    socket.emit("join-local-room", { room: params.room, user: user?.email })
-  }, [params.room, socket, user?.email])
+    if(user){
+      socket.emit("join-local-room", { room: params.room, user: user?.email })
+    }
+  }, [params.room, socket, user])
 
   useEffect(() => {
     socket.on("join-local-room", joinLocalRoom)
@@ -55,10 +58,11 @@ function Page({ params }: { params: { room: string } }) {
         toastAction.showToast("You Won This match", "green", () => route.replace("/dashboard"), "return")
       })
     }
-  }, [])
+  }, [joinLocalRoom, route, sendEmail, socket])
 
   return (
-    <div className='flex w-screen h-screen justify-center'>
+    <div className='flex w-screen h-screen justify-around p-5'>
+
       <ToasterWithAction />
       {<div className='flex flex-wrap self-center w-[600px]'>
         <div className='border w-1/2 p-5 rounded-[20px_0px_0px_0px]'>
@@ -104,6 +108,13 @@ function Page({ params }: { params: { room: string } }) {
         </div>
 
       </div>}
+      {!opponent ?
+        <div className='border w-[300px] p-3 ms-3 h-full overflow-auto'>
+          {user?.frnds?.map((x: any) => (
+            <Challengecard name={x?.fullName} email={x?.email} rank={x?.rank} score={x?.score} key={x} room={params?.room} />
+          ))}
+        </div>
+        : null}
     </div>
   )
 }

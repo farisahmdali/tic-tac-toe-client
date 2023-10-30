@@ -2,14 +2,15 @@
 import Cards from "@/Components/dashboard/Cards";
 import Navbar from "@/Components/dashboard/Navbar";
 import Sidebar from "@/Components/dashboard/Sidebar";
-import { getTournaments, saveTournaments } from "@/redux/features/auth/authActions";
-import { resetTournament } from "@/redux/features/auth/authSlice";
+import { getTournaments, saveTournaments, searchTournament } from "@/redux/features/auth/authActions";
+import { resetTournament, setTournament } from "@/redux/features/auth/authSlice";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 function Dashboard() {
   const dispatch: any = useDispatch();
+  const [search,SetSearch] = useState<any>();
   const [limit,setLimit] = useState(0)
   const router = useRouter()
   const {tournaments} = useSelector((state:any)=>state.auth)
@@ -25,11 +26,54 @@ function Dashboard() {
 
   return (
     <div>
-      {/* <Sidebar /> */}
-      <div className="pt-14 ps-20 flex flex-wrap grid-cols-1 ">
+      <div className="absolute right-8 top-14 outline-none">
+              <div className="absolute inset-y-0 left-0 flex items-center outline-none pl-3 pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                  />
+                </svg>
+              </div>
+              <input
+                type="search"
+                id="default-search"
+                onChange={(e)=>SetSearch(e.target.value)}
+                className="block w-full pl-12 text-sm outline-none text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 "
+                placeholder="Search"
+              />
+              <button
+              onClick={()=>{
+                if(search){
+                  let res = dispatch(searchTournament(search))
+                  res.then((x:any)=>{
+                    console.log(x?.payload)
+                    dispatch(setTournament(x?.payload[0]))
+                  })
+                  
+                }else{
+                  dispatch(resetTournament())
+                  dispatch(getTournaments(50))
+                }
+              }}
+              className="text-white absolute text-[10px] right-2.5 bottom-[2.5px] bg-indigo-600 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg  px-4 "
+              >
+                Search
+              </button>
+            </div>
+      <div className="pt-20 ps-20 flex flex-wrap grid-cols-1 ">
+
         {tournaments.map((x:any,index:number)=>(
           // eslint-disable-next-line react/jsx-key
-          <div>
             <Cards val={x} key={index} handleClick={()=>{
               let res = dispatch(saveTournaments(x._id))
               res.then(async ()=>{
@@ -41,7 +85,6 @@ function Dashboard() {
               router.push("/tournament/"+x?.type+"/"+x?._id)
             }}
             />
-          </div>
         ))}
         
         <button

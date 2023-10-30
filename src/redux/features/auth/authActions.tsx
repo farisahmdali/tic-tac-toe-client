@@ -146,3 +146,44 @@ export const getTournamentsDetails=createAsyncThunk("/auth/getTournamentsDetails
         throw Error()
     }
 })
+
+export const searchTournament=createAsyncThunk("/auth/getTournaments",async(elem:string)=>{
+    try{
+        const res =await instance.get("/searchTournament",{params:{elem}})
+        return [res.data]
+    }catch(err){
+        console.log(err)
+        throw Error()
+    }
+})
+
+export const addfrnd=createAsyncThunk("/auth/addfrnd",async(id:string)=>{
+    try{
+        const res = await instance.post("/addfrnd",{id})
+    }catch(err){
+        console.log(err);
+        throw Error()
+        
+    }
+})
+
+export const getfrndDetails=createAsyncThunk("/auth/getfrndDetails",async(ids:string[])=>{
+    try{
+        const res = await instance.get("/getfrnds-details",{params:{ids}})
+        return res.data
+    }catch(err){
+        console.log(err);
+        throw Error()
+        
+    }
+})
+export const getUsersByRank=createAsyncThunk("/auth/getUserByRank",async()=>{
+    try{
+        const res = await instance.get("/rank-sorted")
+        console.log(res)
+        return res.data
+    }catch(err){
+        console.log(err);
+        throw Error()
+    }
+})

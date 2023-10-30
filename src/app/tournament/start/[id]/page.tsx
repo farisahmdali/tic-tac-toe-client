@@ -151,6 +151,7 @@ function Page({ params }: { params: { id: string } }) {
             data=false
             setTimeLimit(5)
             toastAction.showToast("Its Golden Time", "#825717", () => {
+                socket.emit("golden-game-done")
                 setStopTime(false)
                 console.log("i won")
             }, "Next Match")
@@ -164,9 +165,10 @@ function Page({ params }: { params: { id: string } }) {
         setStopTime(true)
         setTimeLimit(5)
         toastAction.showToast("Its Golden Time", "#825717", () => {
+            socket.emit("golden-game-done")
             setStopTime(false)
             console.log("i won")
-        }, "Next Match")
+        }, "Next round")
     }, [])
 
     const draw = useCallback(() => {
@@ -200,6 +202,7 @@ function Page({ params }: { params: { id: string } }) {
         } else {
             setTimeLimit(5)
             toastAction.showToast("Its Golden Time", "#825717", () => {
+                socket.emit("golden-game-done")
                 setStopTime(false)
                 console.log("i won")
             }, "Next Match")
@@ -218,6 +221,10 @@ function Page({ params }: { params: { id: string } }) {
         socket.on("round-finished", roundFinished)
         socket.on("gameFinished",gameFinished)
         socket.on("golden-game", goldenGame)
+        socket.on("golden-game-done",()=>{
+            setStopTime(false)
+            toastAction.close()
+        })
         socket.on("start-game-2", (opponent: any) => {
             setOpponent(opponent)
             setWaiting(true)
@@ -227,6 +234,10 @@ function Page({ params }: { params: { id: string } }) {
             socket.off("playing", playing)
             socket.off("i-won", Won)
             socket.off("next-round", nextRound)
+            socket.off("golden-game",()=>{
+                setStopTime(true)
+                toastAction.close()
+            })
             socket.off('start-game', () => {
                 setWaiting(true)
                 socket.emit("start-game-2")

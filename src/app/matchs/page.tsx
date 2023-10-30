@@ -19,16 +19,10 @@ function Page() {
   }, [])
   return (
     <div className='pt-14 ps-20 pe-5'>
-      <div className='min-h-[calc(100vh-5rem)] w-[calc(100vw-3.5rem-400px)] p-3 float-left  border'>
+      <div className='h-[calc(100vh-5rem)] w-[calc(100vw-3.5rem-400px)] p-3 float-left  border'>
 
         {tournament.map((x: any) => (
           x.admin !== user?._id ? <Cards val={x} key={x?._id}/> : null
-        ))}
-      </div>
-      <div className='min-h-[calc(100vh-5rem)] w-[350px] p-3 float-right  border'>
-        <h1 className='underline'>Hosted</h1>
-        {tournament.map((x: any) => (
-          x.admin === user?._id ? <AdminCards val={x} key={x._id}/> : null
         ))}
       </div>
     </div>
