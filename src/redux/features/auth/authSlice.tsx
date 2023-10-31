@@ -11,7 +11,8 @@ interface AuthState {
     reset: boolean | number,
     searchUserRes: object[] | null[],
     tournaments: object[] | null[],
-    socket: any
+    socket: any,
+    goToRoute:string | null
 }
 
 const initialState: AuthState = {
@@ -23,7 +24,8 @@ const initialState: AuthState = {
     reset: false,
     searchUserRes: [],
     tournaments: [],
-    socket: io(process.env.NEXT_PUBLIC_API_BASE_URL+"")
+    socket: io(process.env.NEXT_PUBLIC_API_BASE_URL+""),
+    goToRoute:""
 }
 
 export const authSlice = createSlice({
@@ -43,100 +45,106 @@ export const authSlice = createSlice({
         setTournament:(state,action)=>{
             state.tournaments=action.payload
         },
+        setgoToRoute:(state,action)=>{
+            state.goToRoute=action.payload
+        },
+        removegoToRoute:(state)=>{
+            state.goToRoute = null
+        }
     },
     extraReducers: (builder) => {
-        builder.addCase(otp.rejected, (state, action) => {
+        builder.addCase(otp.rejected, (state:any) => {
             state.error = true;
         })
-        builder.addCase(otp.fulfilled, (state, action) => {
+        builder.addCase(otp.fulfilled, (state:any) => {
             state.otpStatus = true;
         })
 
-        builder.addCase(signup.fulfilled, (state, action) => {
+        builder.addCase(signup.fulfilled, (state:any, action:any) => {
             state.token = action.payload
         })
-        builder.addCase(getUser.fulfilled, (state, action) => {
+        builder.addCase(getUser.fulfilled, (state:any, action:any) => {
             state.user = action.payload
             state.loading = false
         })
-        builder.addCase(getUser.pending, (state) => {
+        builder.addCase(getUser.pending, (state:any) => {
             state.loading = true
         })
-        builder.addCase(getUser.rejected, (state) => {
+        builder.addCase(getUser.rejected, (state:any) => {
             state.loading = false
             state.error = true
         })
-        builder.addCase(login.rejected, (state) => {
+        builder.addCase(login.rejected, (state:any) => {
             state.error = true
             state.loading = false
         })
 
-        builder.addCase(login.pending, (state) => {
+        builder.addCase(login.pending, (state:any) => {
             state.loading = true
         })
-        builder.addCase(login.fulfilled, (state, action) => {
+        builder.addCase(login.fulfilled, (state:any, action:any) => {
             state.loading = false
             state.token = action.payload
         })
 
-        builder.addCase(resetPassword.pending, (state) => {
+        builder.addCase(resetPassword.pending, (state:any) => {
             state.loading = true
         })
 
-        builder.addCase(resetPassword.rejected, (state) => {
+        builder.addCase(resetPassword.rejected, (state:any) => {
             state.error = true
             state.loading = false
         })
-        builder.addCase(resetPassword.fulfilled, (state) => {
+        builder.addCase(resetPassword.fulfilled, (state:any) => {
             state.loading = false
             state.reset = true
         })
-        builder.addCase(searchUser.pending, (state) => {
+        builder.addCase(searchUser.pending, (state:any) => {
             state.loading = true
         })
-        builder.addCase(searchUser.fulfilled, (state, action) => {
+        builder.addCase(searchUser.fulfilled, (state:any, action:any) => {
             state.searchUserRes = action.payload
             state.loading = false
         })
-        builder.addCase(searchUser.rejected, (state) => {
+        builder.addCase(searchUser.rejected, (state:any) => {
             state.loading = false
         })
-        builder.addCase(hostTournament.pending, (state) => {
+        builder.addCase(hostTournament.pending, (state:any) => {
             state.loading = true;
         })
-        builder.addCase(hostTournament.rejected, (state) => {
+        builder.addCase(hostTournament.rejected, (state:any) => {
             state.loading = false
             state.error = true
         })
-        builder.addCase(hostTournament.fulfilled, (state) => {
+        builder.addCase(hostTournament.fulfilled, (state:any) => {
             state.loading = false
             state.reset = true
         })
-        builder.addCase(getRoomId.pending, (state) => {
+        builder.addCase(getRoomId.pending, (state:any) => {
             state.loading = true
         })
-        builder.addCase(getRoomId.rejected, (state) => {
+        builder.addCase(getRoomId.rejected, (state:any) => {
             state.loading = false
         })
-        builder.addCase(getRoomId.fulfilled, (state, action) => {
+        builder.addCase(getRoomId.fulfilled, (state:any, action:any) => {
             state.loading = false
             state.reset = action.payload
         })
-        builder.addCase(getTournaments.pending, (state) => {
+        builder.addCase(getTournaments.pending, (state:any) => {
             state.loading = true
         })
-        builder.addCase(getTournaments.fulfilled, (state, action) => {
+        builder.addCase(getTournaments.fulfilled, (state:any, action:any) => {
             state.loading = false
             action.payload.map((x:never) => {
                 state.tournaments.push(x)
             })
         })
 
-        builder.addCase(getTournaments.rejected, (state) => {
+        builder.addCase(getTournaments.rejected, (state:any) => {
             state.loading = false
         })
 
     },
 })
 
-export const { errorFalse, resetFalse,resetTournament,setTournament } = authSlice.actions
+export const { errorFalse, resetFalse,resetTournament,setTournament,setgoToRoute,removegoToRoute } = authSlice.actions

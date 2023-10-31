@@ -7,13 +7,13 @@ import { useSelector, useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import Toaster, { toast } from "@/Components/Toaster/Toaster";
-import { errorFalse } from "@/redux/features/auth/authSlice";
+import { errorFalse, removegoToRoute } from "@/redux/features/auth/authSlice";
 import ForgotPassword from "@/Components/login/ForgotPassword";
 
 export default function Home() {
   const dispatch: any = useDispatch();
   const router = useRouter();
-  const { token, error, user } = useSelector((state: any) => state.auth);
+  const { token, error, user,goToRoute } = useSelector((state: any) => state.auth);
   const [forgotPassword,setForgotPassword]=useState(false)
 
   const handleSubmit = (e: any) => {
@@ -36,8 +36,14 @@ export default function Home() {
   }, [error,dispatch]);
 
   useEffect(() => {
-    if (user) {
-      router.replace("/dashboard");
+    if (user && Cookies.get("token")) {
+      if(goToRoute){
+        const r = goToRoute
+      dispatch(removegoToRoute())
+        router.replace(r)
+      }else{
+        router.replace("/dashboard");
+      }
     }
   }, [user, router]);
 

@@ -35,6 +35,8 @@ function Page() {
         <div className='mt-10'>
           <h6>Rank : {user?.rank || 0}</h6>
           <h6>Score : {user?.score || 0}</h6>
+          <h6>Played : {user?.played || 0}</h6>
+          <h6>Wins : {user?.wins || 0}</h6>
         </div>
         <button
           onClick={() => {

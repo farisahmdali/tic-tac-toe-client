@@ -19,10 +19,10 @@ function Page() {
     instant: true,
     date: "",
     time: "",
-    view:true,
+    view: true,
   });
   const [instant, setInstant] = useState(false);
-  const { searchUserRes,socket,user } = useSelector((state: any) => state.auth);
+  const { searchUserRes, socket, user } = useSelector((state: any) => state.auth);
   const dispatch: any = useDispatch();
   // useEffect(()=>{
   //   if(reset){
@@ -43,24 +43,32 @@ function Page() {
     e.preventDefault();
     console.log(hostDetails);
     const res = dispatch(hostTournament(hostDetails));
-    res.then((res:any)=>{
-      if(hostDetails?.instant){
+    res.then((res: any) => {
+      if (hostDetails?.instant) {
         console.log(res)
-        for(let i=0;i<hostDetails.invite.length;i++){
+        for (let i = 0; i < hostDetails.invite.length; i++) {
           console.log(hostDetails.invite[i])
-          socket.emit("challenge", { user: hostDetails.invite[i], link: "/tournament/"+hostDetails?.type+"/"+res.payload.hostId ,sender:user?.fullName})
+          socket.emit("challenge", { user: hostDetails.invite[i], link: "/tournament/" + hostDetails?.type + "/" + res.payload.hostId, sender: user?.fullName })
         }
-        router.replace("/tournament/"+hostDetails?.type+"/"+res.payload.hostId)
-      }else{
-        toast.showToast("Created Tournament Successfully","green")
-      setTimeout(()=>router.replace("/dashboard") ,2000)
+        router.replace("/tournament/" + hostDetails?.type + "/" + res.payload.hostId)
+      } else {
+        toast.showToast("Created Tournament Successfully", "green")
+        setTimeout(() => router.replace("/dashboard"), 2000)
       }
-      })
+    })
   };
 
   return (
     <div>
-      <Toaster/>
+      <Toaster />
+      <button
+        onClick={() => {
+          router.replace("/dashboard")
+        }}
+        className="fixed left-3 top-2 justify-center m-2 rounded-full bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} fill="currentColor" className="bi bi-house" viewBox="0 0 16 16"> <path fillRule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" /> <path fillRule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" /> </svg>
+      </button>
       <div className="flex p-5 h-screen">
         <div className="md:w-1/3 w-1/2 flex flex-col justify-center h-full items-center">
           <h1 className="mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-400">
@@ -97,9 +105,9 @@ function Page() {
               <option value={"public"}>Public</option>
               <option value={"private"}>Private</option>
             </select>
-                 
-           
-            
+
+
+
 
             <button
               type="submit"

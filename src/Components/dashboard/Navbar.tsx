@@ -28,7 +28,7 @@ const route = useRouter()
   return (
     <div className="fixed w-screen bg-[#00000000] h-11 flex justify-between items-center border z-0 ps-14 pe-2 border-[#2D2F39]">
       <div>
-        <div className="bg-[#2D2F39] flex ps-2 rounded h-8 p-1">
+        <div className="bg-[#2D2F39] flex ps-2 min-w-[110px] justify-between rounded h-8 p-1">
           <h1 className="text-sm ms-1">{user?.fullName}</h1>
           <div className="ms-8">
             <p className=" text-[9px]">Rank-{user?.rank || 0}</p>
