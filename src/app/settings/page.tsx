@@ -3,31 +3,39 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
-import { getOpponentsDetails, getUser, getfrndDetails, searchUser } from '@/redux/features/auth/authActions'
+import { getOpponentsDetails, getUser, getfrndDetails, searchUser, updateName } from '@/redux/features/auth/authActions'
 import Add from '@/Components/settings/Add'
 
 function Page() {
   const { user } = useSelector((state: any) => state.auth)
   const [search, setSearch] = useState<any>("")
+  const [value,setValue] = useState(user?.fullName)
+  const [editName,setEditName]=useState(false)
   const [add, setAdd] = useState<any>()
   const [frnds, setFrnds] = useState<any>([])
   const route = useRouter()
   const dispatch: any = useDispatch()
   useEffect(() => {
     setFrnds(user?.frnd)
+    setValue(user?.fullName)
   }, [user])
 
   useEffect(() => {
     setAdd(user?.frnds || [])
-  }, [frnds])
+  }, [user])
+
   return (
     <div className='pt-14 ps-20 flex'>
 
       <div className='w-1/2  rounded h-[calc(100vh-5rem)] p-5'>
-        <div className='flex mt-10'>
-          {/* <img className="w-36 h-36  rounded-full" src={user?.pic ? user?.pic : "./no-pic.jpg"} alt="Rounded avatar" /> */}
-          <div className='ms-8 self-center'>
-            <h1 className='text-3xl'>{user?.fullName}</h1>
+        <div className='flex w-full mt-10'>
+          <div className='ms-8 w-full self-center'>
+            {editName ? <><input className='text-black' type="text" value={value} onChange={(e)=>setValue(e.target.value)} /> <button className='bg-indigo-600 px-3 rounded ' onClick={async()=>{
+            await dispatch(updateName(value))
+            dispatch(getUser())
+            setEditName(false)
+            }}>Submit</button></>:<div className='flex w-full justify-between'><h1 className='text-3xl'>{user?.fullName}</h1><button className='bg-amber-500 hover:bg-amber-600 px-5 py-2 rounded' onClick={()=>setEditName(!editName)}>Edit Name</button></div>}
+            
             <h2 className='mt-3'>{user?.email}</h2>
           </div>
         </div>

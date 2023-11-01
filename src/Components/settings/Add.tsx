@@ -1,4 +1,4 @@
-import { addfrnd } from "@/redux/features/auth/authActions";
+import { addfrnd, removefrnd } from "@/redux/features/auth/authActions";
 import React from "react";
 import { useDispatch } from "react-redux";
 
@@ -22,7 +22,16 @@ function Add({name,email,rank,score,id,frnds,setAdd}:{name:string,email:string,r
         className="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
         Add as Friend
-      </button>:null}
+      </button>:<button
+        type="submit"
+        onClick={()=>{
+            dispatch(removefrnd(id))
+            setAdd()
+        }}
+        className="flex justify-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >
+        Remove
+      </button>}
   
       
    

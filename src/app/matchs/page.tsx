@@ -19,11 +19,10 @@ function Page() {
   }, [dispatch])
   return (
     <div className='pt-14 ps-20 pe-5'>
-      <div className='h-[calc(100vh-5rem)] w-[calc(100vw-3.5rem-400px)] p-3 float-left  border'>
-
-        {tournament.map((x: any) => (
-          x.admin !== user?._id ? <Cards val={x} key={x?._id}/> : null
-        ))}
+      <div className='h-[calc(100vh-5rem)] flex flex-wrap justify-start items-start w-[calc(100vw-6rem)] p-3 float-left  border overflow-auto'>
+    {user?.history?.map((x:any)=>(
+      <Cards val={x} key={x}/>
+    ))}
       </div>
     </div>
   )

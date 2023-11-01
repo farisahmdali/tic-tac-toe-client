@@ -167,6 +167,16 @@ export const addfrnd=createAsyncThunk("/auth/addfrnd",async(id:string)=>{
     }
 })
 
+export const removefrnd=createAsyncThunk("/auth/removefrnd",async(id:string)=>{
+    try{
+        const res = await instance.post("/removefrnd",{id})
+    }catch(err){
+        console.log(err);
+        throw Error()
+        
+    }
+})
+
 export const getfrndDetails=createAsyncThunk("/auth/getfrndDetails",async(ids:string[])=>{
     try{
         const res = await instance.get("/getfrnds-details",{params:{ids}})
@@ -182,6 +192,16 @@ export const getUsersByRank=createAsyncThunk("/auth/getUserByRank",async()=>{
         const res = await instance.get("/rank-sorted")
         console.log(res)
         return res.data
+    }catch(err){
+        console.log(err);
+        throw Error()
+    }
+})
+
+export const updateName=createAsyncThunk("/auth/updateName",async(name:string)=>{
+    try{
+        instance.post("updateName",{name})
+
     }catch(err){
         console.log(err);
         throw Error()
