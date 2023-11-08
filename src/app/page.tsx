@@ -18,7 +18,6 @@ export default function Home() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(e.target[2].value)
     dispatch(login({ email: e.target[0].value, password: e.target[1].value }));
   };
 

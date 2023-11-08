@@ -2,7 +2,6 @@ import { useRouter } from 'next/navigation';
 import React from 'react'
 
 function AdminCards({ val }: { val: { _id:string ,type: string, description: string, limit: number, date: string, time: string, head: string, joined: any, viewer: number | null, view: boolean | null } }) {
-  console.log(val);
   const route = useRouter()
 
   return (

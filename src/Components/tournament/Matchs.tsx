@@ -29,7 +29,6 @@ function Player4({ id }: { id: string }) {
             setTime(10)
         } else {
             setTime(10)
-            console.log(usersOnline);
             
         }
     }, [id, matchs, router, socket, time, usersOnline, details, reachedFinal])
@@ -44,9 +43,7 @@ function Player4({ id }: { id: string }) {
     useEffect(() => {
 
         socket.emit("get-matchs-tournament", {}, (data: any) => {
-            console.log(data)
             if (data === "final") {
-                console.log(data)
                 setReachedFinal(true)
                 toast.showToast("Your in Final Round !", "green")
             } else if (data === "loser") {
@@ -63,13 +60,11 @@ function Player4({ id }: { id: string }) {
 
 
             else if (data) {
-                console.log(data)
                 setMatchs([...data])
                 for (let i = 0; i < data?.length; i++) {
                     if (data[i][0]?.email === user.email) {
                         let res = dispatch(getOpponentsDetails(data[i][0].email))
                         res.then((res: any) => {
-                            console.log(res)
                             setOpponent(res?.payload)
                             socket.emit("start-tournament")
                             setReachedFinal(false)
@@ -78,7 +73,6 @@ function Player4({ id }: { id: string }) {
                     } else if (data[i][1]?.email === user?.email) {
                         let res = dispatch(getOpponentsDetails(data[i][1]?.email))
                         res.then((res: any) => {
-                            console.log(res)
                             setOpponent(res?.payload)
                             socket.emit("start-tournament")
                             setReachedFinal(false)
@@ -94,7 +88,6 @@ function Player4({ id }: { id: string }) {
         const res = dispatch(getTournamentsDetails(id))
         res.then((x: any) => {
             setDetails(x?.payload)
-            console.log(x)
         })
     }, [dispatch, id, usersOnline])
 
@@ -111,7 +104,6 @@ function Player4({ id }: { id: string }) {
 
     const final = useCallback(() => {
         toast.showToast("Your in Final Round !", "green")
-        console.log("++++++++++++++++++++++++++++")
         setReachedFinal(false)
     }, [])
 

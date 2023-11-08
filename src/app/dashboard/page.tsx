@@ -21,7 +21,6 @@ function Dashboard() {
     setLimit(tournaments?.length+50)
   },[])
 
-  console.log(tournaments);
   
 
 
@@ -58,7 +57,6 @@ function Dashboard() {
                 if(search){
                   let res = dispatch(searchTournament(search))
                   res.then((x:any)=>{
-                    console.log(x?.payload)
                     dispatch(setTournament(x?.payload[0]))
                   })
                   

@@ -11,7 +11,6 @@ function Page() {
             if(data){
                 router.replace("/play-with-friends/local-room/"+data)
             }
-            console.log(data)
         });
     }, [router, socket])
 
@@ -20,14 +19,12 @@ function Page() {
             if(data){
                 router.replace("/play-with-friends/local-room/"+data)
             }
-            console.log(data)
         })
         return ()=>{
             socket.off("random",(data:any)=>{
                 if(data){
                     router.replace("/play-with-friends/local-room/"+data)
                 }
-                console.log(data)
             })
         }
     },[router, socket])

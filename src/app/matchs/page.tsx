@@ -13,7 +13,6 @@ function Page() {
   useEffect(() => {
     let res = dispatch(getMyTournaments())
     res.then((res: any) => {
-      console.log(res)
       setTournament(res.payload.user)
     })
   }, [dispatch])

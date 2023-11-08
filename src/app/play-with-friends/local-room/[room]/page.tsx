@@ -16,10 +16,8 @@ function Page({ params }: { params: { room: string } }) {
 
   //socket function ******************************************
   const joinLocalRoom = useCallback((data: any) => {
-    console.log(data)
     let res = dispatch(getOpponentsDetails(data.user))
     res.then((res: any) => {
-      console.log(res)
       setOpponent(res?.payload)
     })
     socket.emit("sendEmail", { room: params.room, user: user?.email })
@@ -27,10 +25,8 @@ function Page({ params }: { params: { room: string } }) {
   }, [])
 
   const sendEmail = useCallback((data: any) => {
-    console.log(data)
     let res = dispatch(getOpponentsDetails(data.user))
     res.then((res: any) => {
-      console.log(res)
       setOpponent(res?.payload)
     })
 

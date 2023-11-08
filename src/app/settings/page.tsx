@@ -40,7 +40,6 @@ function Page() {
       image: "https://example.com/your_logo",
       order_id: order.id, //This is a sample Order ID. Pass the `id` obtained in the response of createOrder().
       handler: function (response: any) {
-        console.log(response)
         const res = dispatch(addCredittoACC({ id: response.razorpay_order_id, amount: val }))
         res.then(() => {
           dispatch(getUser())
@@ -72,12 +71,10 @@ function Page() {
 
   const addCredits = () => {
     toastinput.showToast("Enter The Amount", "blue", async (val) => {
-      console.log("wokring", val);
       const res = dispatch(orderPayment(parseInt(val) * 100))
 
       res.then((x: any) => {
         const order = x?.payload?.order
-        console.log(order)
         paymentGateWay(order, val * 100)
       })
     }, "submit")
@@ -230,7 +227,6 @@ function Page() {
 
                 const res = dispatch(searchUser(search))
                 res.then((x: any) => {
-                  console.log(x)
                   setAdd(x?.payload)
                 })
               } else {

@@ -10,7 +10,6 @@ function Page() {
   useEffect(()=>{
     const res = dispatch(getUsersByRank())
     res.then((x:any)=>{
-      console.log(x)
       setRank(x?.payload)
     })
   },[])

@@ -108,7 +108,6 @@ export const getTournaments = createAsyncThunk("/auth/getTournaments",async(limi
 export const getOpponentsDetails = createAsyncThunk("/auth/getOpponentsDetails",async(email:string)=>{
     try{
         const res =await instance.get("/get-opponent-details",{params:{email}})
-        console.log(res.data)
         return res.data.user
     }catch(err){
         console.log(err)
@@ -119,7 +118,6 @@ export const getOpponentsDetails = createAsyncThunk("/auth/getOpponentsDetails",
 export const getMyTournaments = createAsyncThunk("/auth/getMyTournaments",async()=>{
     try{
         const res =await instance.get("/get-my-tournaments")
-        console.log(res.data)
         return res.data
     }catch(err){
         console.log(err)
@@ -190,7 +188,6 @@ export const getfrndDetails=createAsyncThunk("/auth/getfrndDetails",async(ids:st
 export const getUsersByRank=createAsyncThunk("/auth/getUserByRank",async()=>{
     try{
         const res = await instance.get("/rank-sorted")
-        console.log(res)
         return res.data
     }catch(err){
         console.log(err);

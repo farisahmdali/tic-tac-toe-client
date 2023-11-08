@@ -14,7 +14,6 @@ const instance = axios.create({
     return config;
   },
   (error) => {
-    console.log(process.env.NEXT_PUBLIC_API_BASE_URL+"/v4/api");
     
     return Promise.reject(error);
   })

@@ -42,14 +42,11 @@ function Page() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(hostDetails);
     if(hostDetails.amount*100<=user?.credit){
       const res = dispatch(hostTournament(hostDetails));
       res.then((res: any) => {
         if (hostDetails?.instant) {
-          console.log(res)
           for (let i = 0; i < hostDetails.invite.length; i++) {
-            console.log(hostDetails.invite[i])
             socket.emit("challenge", { user: hostDetails.invite[i], link: "/tournament/" + hostDetails?.type + "/" + res.payload.hostId, sender: user?.fullName })
           }
           router.replace("/tournament/" + hostDetails?.type + "/" + res.payload.hostId)

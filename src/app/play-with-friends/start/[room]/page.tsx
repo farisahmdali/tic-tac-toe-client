@@ -42,7 +42,6 @@ const winning = () => {
                     setPlay([""])
                 }, `next round`)
                 setStopTime(true)
-                console.log("working me")
                 setScore(score + 1)
                 socket.emit("i-won-local-match")
             }
@@ -110,9 +109,7 @@ const winning = () => {
             setTime(10)
         })
         socket.on("i-won-local-match", (data: string[]) => {
-            console.log("working opponent",opponentScore)
             setOpponentScore(opponentScore+1)
-            console.log("working opponent",opponentScore)
             setPlay(data)
             toastAction.showToast(`You loose This Round!`, `red`, () => {
                 socket.emit("next-round-local")
@@ -181,7 +178,6 @@ const winning = () => {
             })
             socket.off("i-won-local-match", (data: string[]) => {
                 setOpponentScore(opponentScore + 1)
-            console.log("working opponent")
             setPlay(data)
             toastAction.showToast(`You loose This Round!`, `red`, () => {
                 socket.emit("next-round-local")
