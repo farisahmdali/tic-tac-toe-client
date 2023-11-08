@@ -1,4 +1,5 @@
 "use client"
+import Toaster, { toast } from "@/Components/Toaster/Toaster";
 import { getTournamentsDetails } from "@/redux/features/auth/authActions";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -11,6 +12,7 @@ function Page({ params }: { params: { id: string } }) {
     const [details, setDetails] = useState<any>()
     const [current, setCurrent] = useState<any>()
     const [players, setPlayers] = useState<any>([])
+    const [called,setCalled] = useState(false)
     const router = useRouter()
     //timer
 
@@ -53,15 +55,26 @@ function Page({ params }: { params: { id: string } }) {
         res.then((x: any) => {
             setDetails(x?.payload)
         })
-        if (user) {
+        if (user&&!called) {
+            setCalled(true)
+            setTimeout(()=>{
+                if(user.credit<=details?.amount){
 
-            socket.emit("join-tournament-public", { user: { fullName: user?.fullName, email: user?.email, _id: user?._id }, room: params.id }, (data: any) => {
-                console.log(data, "hello");
-                if(data!=="cannot join"){
+                    
+                    socket.emit("join-tournament-public", { user: { fullName: user?.fullName, email: user?.email, _id: user?._id }, room: params.id }, (data: any) => {
+                        console.log(data, "hello");
+                        if(data==="full"){
+                            router.replace("/dashboard")
+                        }
+                        if(data!=="cannot join" && data!=="full"){
                     setPlayers(data)
                 }
                 
             })
+        }else{
+            toast.showToast("No Enough Balance","red")
+        }
+        },1000)
         }
     }, [dispatch, params.id, socket, user])
 
@@ -86,6 +99,7 @@ function Page({ params }: { params: { id: string } }) {
     }, [])
     return (
         <div className=" border border-slate-500 h-[95vh] w-[95vw] m-auto my-[10px] p-3 rounded-[12px]">
+            <Toaster/>
             <div className="flex h-[60%] justify-between ">
                 <div className="grid grid-cols-3 gap-4 p-4 w-full">
                     {players?.map((x: any, index: number) => (
@@ -102,7 +116,7 @@ function Page({ params }: { params: { id: string } }) {
                     <h1 className='underline '>{details?.head}</h1>
                     <h1 className='flex text-xs mt-3'>Description: <p>{details?.description}</p></h1>
                     <h1 className='flex text-xs '>Type : <p>{details?.type}</p></h1>
-                    <h1 className='flex text-xs '>Max Player : <p>{details?.limit}</p></h1>
+                    <h1 className='flex text-xs '>Amount : <p>{details?.amount}</p></h1>
                     {details?.date ? <><h1 className='flex text-xs mt-5'>Date : <p>{details?.date}</p></h1>
                         <h1 className='flex text-xs '>Time : <p>{details?.time}</p></h1></> : <h1 className='flex text-xs mt-5 text-yellow-500 '>Quick Play</h1>}
                 </div>

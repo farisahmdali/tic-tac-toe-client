@@ -1,4 +1,5 @@
 "use client";
+import Toaster, { toast } from "@/Components/Toaster/Toaster";
 import Cards from "@/Components/dashboard/Cards";
 import Navbar from "@/Components/dashboard/Navbar";
 import Sidebar from "@/Components/dashboard/Sidebar";
@@ -13,7 +14,7 @@ function Dashboard() {
   const [search,SetSearch] = useState<any>();
   const [limit,setLimit] = useState(0)
   const router = useRouter()
-  const {tournaments} = useSelector((state:any)=>state.auth)
+  const {tournaments,user} = useSelector((state:any)=>state.auth)
   useEffect(()=>{
     dispatch(resetTournament())
     dispatch(getTournaments(limit));
@@ -26,6 +27,7 @@ function Dashboard() {
 
   return (
     <div>
+      <Toaster/>
       <div className="absolute right-8 top-14 outline-none">
               <div className="absolute inset-y-0 left-0 flex items-center outline-none pl-3 pointer-events-none">
                 <svg
@@ -82,7 +84,11 @@ function Dashboard() {
               })
             }} 
             handleClickPlay={()=>{
+              if(x?.amount*100>user?.credit){
+                toast.showToast("No Enough Balance","red")
+              }else{
               router.push("/tournament/"+x?.type+"/"+x?._id)
+              }
             }}
             />
         ))}

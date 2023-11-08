@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Cards({ val, handleClick, handleClickPlay }: { val: { type: string, description: string, limit: number, date: string, time: string, head: string, joined: any, viewer: number | null, view: boolean | null }, handleClick: () => void, handleClickPlay: () => void }) {
+function Cards({ val, handleClick, handleClickPlay }: { val: { type: string,amount:number|null, description: string, limit: number, date: string, time: string, head: string, joined: any, viewer: number | null, view: boolean | null }, handleClick: () => void, handleClickPlay: () => void }) {
 
   return (
     <div className='w-[200px] min-h-[150px] pe-2 pt-2 ps-2 float-left justify-between ms-8 mt-5 rounded-[20px] bg-gradient-to-br flex flex-col to-[#4F46E5] from-[#3C3E4C] '>
@@ -8,6 +8,7 @@ function Cards({ val, handleClick, handleClickPlay }: { val: { type: string, des
 
       <h1 className='underline '>{val?.head}</h1>
       <h1 className='flex text-xs justify-between text-black'>Description: <p className='text-white'>{val?.description}</p></h1>
+      <h1 className='flex text-xs justify-between text-black'>Amount: <p className='text-white'>{val?.amount || 0}</p></h1>
       <h1 className='flex text-xs justify-between text-black'>Type : <p className='text-white'>{val?.type}</p></h1>
       
 

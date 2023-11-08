@@ -74,10 +74,13 @@ function Page({ params }: { params: { id: string } }) {
         if (user) {
 
             socket.emit("join-tournament-private", { user: { fullName: user?.fullName, email: user?.email, _id: user?._id }, room: params.id,pass }, (data: any) => {
-                if(data){
+                if(!data || data==="full"){
+                    router.replace("/dashboard")
+                }else{
                     console.log(data, "hello");
                     setPlayers(data)
                     setState(false)
+                    
                 }
             })
         }

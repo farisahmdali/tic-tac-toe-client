@@ -44,13 +44,15 @@ function Loading() {
       reqPermision()
     }
   }, [user, error, route, dispatch])
+  const expecetional = ["/signup"]
   useEffect(() => {
-    if (Cookies.get("token") && !user) {
+    if(expecetional.includes(path))
+    {if (Cookies.get("token") && !user ) {
       dispatch(getUser());
     } else {
       dispatch(setgoToRoute(path))
       route.replace("/")
-    }
+    }}
   }, [dispatch, route]);
   return (
     <>

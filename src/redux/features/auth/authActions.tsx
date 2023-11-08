@@ -207,3 +207,63 @@ export const updateName=createAsyncThunk("/auth/updateName",async(name:string)=>
         throw Error()
     }
 })
+
+export const orderPayment = createAsyncThunk("/auth/orderPayment",async(amount:number)=>{
+    try{
+       const res = await instance.get("/orderPayment",{params:{amount}})
+
+       return res.data
+    }catch(err){
+        console.log(err);
+        throw Error()
+    }
+})
+
+export const addCredittoACC = createAsyncThunk("/auth/addCredits",async(order:{id:string,amount:number})=>{
+    try{
+        instance.post("/addCredits",{order})
+    }catch(err){
+        console.log(err)
+        throw Error()
+    }
+})
+
+export const  withdrawAmount = createAsyncThunk("/auth/withdrawAmount",({amount,upiId}:{amount:number,upiId:string})=>{
+    try{
+        instance.post("/withdraw",{amount,upiId})
+    }catch(err){
+        console.log(err)
+        throw Error()
+    }
+})
+
+export const withdrawLogin = createAsyncThunk("/auth/withdrawLogin",async({username,password}:{username:string,password:string})=>{
+    try{
+       const res = await instance.get("/withdrawLogin",{params:{username,password}})
+       Cookies.set("tokenWith",res.data.token)
+       return res.data.token
+    }catch(err){
+        console.log(err)
+        throw Error()
+    }
+})
+
+export const getWithdraw = createAsyncThunk("/auth/getWithdraw",async()=>{
+    try{
+        const token = await Cookies.get("tokenWith")
+        const res = await instance.get("/get-withdraw-data",{params:{token}})
+        return res.data
+     }catch(err){
+         console.log(err)
+         throw Error()
+     }
+})
+
+export const withdrawDone = createAsyncThunk("/auth/withdrawDone",async(id:string)=>{
+    try{
+        instance.post("/withdraw-done",{id,token:await Cookies.get("tokenWith")})
+    }catch(err){
+        console.log(err)
+         throw Error()
+    }
+})

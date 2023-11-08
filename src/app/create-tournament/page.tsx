@@ -1,7 +1,7 @@
 "use client";
 import Toaster, { toast } from "@/Components/Toaster/Toaster";
 import ShowUsers from "@/Components/create-tournament/ShowUsers";
-import { hostTournament, searchUser } from "@/redux/features/auth/authActions";
+import { getUser, hostTournament, searchUser } from "@/redux/features/auth/authActions";
 import { resetFalse } from "@/redux/features/auth/authSlice";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useEffect, useState } from "react";
@@ -20,6 +20,7 @@ function Page() {
     date: "",
     time: "",
     view: true,
+    amount:0,
   });
   const [instant, setInstant] = useState(false);
   const { searchUserRes, socket, user } = useSelector((state: any) => state.auth);
@@ -33,7 +34,7 @@ function Page() {
   // },[dispatch, reset, router])
 
   useEffect(() => {
-    dispatch(searchUser(search));
+    dispatch(getUser());
   }, []);
   const handleSearch = () => {
     dispatch(searchUser(search));
@@ -42,20 +43,24 @@ function Page() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(hostDetails);
-    const res = dispatch(hostTournament(hostDetails));
-    res.then((res: any) => {
-      if (hostDetails?.instant) {
-        console.log(res)
-        for (let i = 0; i < hostDetails.invite.length; i++) {
-          console.log(hostDetails.invite[i])
-          socket.emit("challenge", { user: hostDetails.invite[i], link: "/tournament/" + hostDetails?.type + "/" + res.payload.hostId, sender: user?.fullName })
+    if(hostDetails.amount*100<=user?.credit){
+      const res = dispatch(hostTournament(hostDetails));
+      res.then((res: any) => {
+        if (hostDetails?.instant) {
+          console.log(res)
+          for (let i = 0; i < hostDetails.invite.length; i++) {
+            console.log(hostDetails.invite[i])
+            socket.emit("challenge", { user: hostDetails.invite[i], link: "/tournament/" + hostDetails?.type + "/" + res.payload.hostId, sender: user?.fullName })
+          }
+          router.replace("/tournament/" + hostDetails?.type + "/" + res.payload.hostId)
+        } else {
+          toast.showToast("Created Tournament Successfully", "green")
+          setTimeout(() => router.replace("/dashboard"), 2000)
         }
-        router.replace("/tournament/" + hostDetails?.type + "/" + res.payload.hostId)
-      } else {
-        toast.showToast("Created Tournament Successfully", "green")
-        setTimeout(() => router.replace("/dashboard"), 2000)
-      }
-    })
+      })
+    }else{
+      toast.showToast("Please Add some Credits","red")
+    }
   };
 
   return (
@@ -85,6 +90,15 @@ function Page() {
               required
               onChange={(e) =>
                 setHostDetails({ ...hostDetails, head: e.target.value })
+              }
+            />
+            <input
+              type="number"
+              placeholder="Amount"
+              className="block border border-grey-light w-full p-1 rounded mb-4"
+              required
+              onChange={(e) =>
+                setHostDetails({ ...hostDetails, amount: parseInt(e.target.value) })
               }
             />
             <textarea
@@ -137,6 +151,7 @@ function Page() {
                 key={x?.email}
                 setHostDetails={setHostDetails}
                 hostDetails={hostDetails}
+                active={x?.active || false}
               />
             ))}
           </div>

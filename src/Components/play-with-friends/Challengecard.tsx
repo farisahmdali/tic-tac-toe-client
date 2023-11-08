@@ -1,8 +1,16 @@
-import React from "react";
-import { useSelector } from "react-redux";
+"use client"
+import { getUser } from "@/redux/features/auth/authActions";
+import React,{useEffect} from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-function Challengecard({ name, email, rank, score, room }: { name: string, email: string, rank: number, score: number, room: string }) {
+function Challengecard({ name, email, rank, score, room,active }: { name: string, email: string, rank: number, score: number, room: string,active:boolean }) {
     const { socket,user } = useSelector((state: any) => state.auth)
+    const dispatch:any = useDispatch()
+
+    useEffect(()=>{
+        dispatch(getUser())
+    },[])
+
     return <div className="flex w-full justify-between  rounded p-2 mt-5 card-gradient">
         <div>
             <h1>Name:{name}</h1>
@@ -16,13 +24,10 @@ function Challengecard({ name, email, rank, score, room }: { name: string, email
                 onClick={() => {
                     socket.emit("challenge", { user: email, link: "/play-with-friends/local-room/" + room ,sender:user?.fullName})
                 }}
-                className="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className={active ? "flex justify-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold leading-6 text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600":"flex justify-center rounded-md bg-amber-600 px-3 py-1.5 text-xs font-semibold leading-6 text-white shadow-sm hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"}
             >
                 Challenge
             </button>
-
-
-
         </div>
     </div>;
 }

@@ -63,7 +63,7 @@ function Page({ params }: { params: { room: string } }) {
   }, [joinLocalRoom, route, sendEmail, socket])
 
   return (
-    <div className='flex w-screen h-screen justify-between p-5'>
+    <div className='flex w-screen h-screen justify-around p-5'>
 
       <ToasterWithAction />
       <button
@@ -117,7 +117,7 @@ function Page({ params }: { params: { room: string } }) {
       {!opponent ?
         <div className='border w-[300px] p-3 h-full overflow-auto'>
           {user?.frnds?.map((x: any) => (
-            <Challengecard name={x?.fullName} email={x?.email} rank={x?.rank} score={x?.score} key={x} room={params?.room} />
+            <Challengecard name={x?.fullName} email={x?.email} rank={x?.rank} score={x?.score} key={x} room={params?.room} active={x?.active || false}/>
           ))}
         </div>
         : null}
