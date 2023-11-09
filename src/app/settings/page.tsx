@@ -194,7 +194,7 @@ function Page() {
 
         </div>
       </div>
-      <div className='w-1/2 overflow-auto rounded h-[calc(100vh-5rem)] p-5 -z-40'>
+      <div className='w-1/2 overflow-auto rounded h-[calc(100vh-5rem)] p-5 z-40'>
         <div className="relative w-72 outline-none">
           <div className="absolute inset-y-0 left-0 flex items-center outline-none pl-3 pointer-events-none">
             <svg

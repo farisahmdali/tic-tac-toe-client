@@ -50,15 +50,22 @@ function Page({ params }: { params: { id: string } }) {
         setPlayers(data)
     }
 
+   
+
     useEffect(() => {
         const res = dispatch(getTournamentsDetails(params.id))
         res.then((x: any) => {
             setDetails(x?.payload)
+            if(user&&x?.payload?.amount>0){
+                if(user?.credit/100<=x?.payload?.amount  || !user?.credit){
+                    toast.showToast("No enough Balance","red")
+                    router.replace("/dashboard")
+                }
+            }
         })
         if (user&&!called) {
             setCalled(true)
             setTimeout(()=>{
-                if(user.credit<=details?.amount){
 
                     
                     socket.emit("join-tournament-public", { user: { fullName: user?.fullName, email: user?.email, _id: user?._id }, room: params.id }, (data: any) => {
@@ -71,13 +78,20 @@ function Page({ params }: { params: { id: string } }) {
                 }
                 
             })
-        }else{
-            toast.showToast("No Enough Balance","red")
-        }
+        
         },1000)
         }
     }, [dispatch, params.id, socket, user])
 
+    useEffect(()=>{
+        console.log(user,details?.amount)
+        if(user&&details?.amount>0){
+            if(user?.credit/100<=details?.amount  || !user?.credit   ){
+                toast.showToast("No Enough Balance","red")
+                router.replace("/dashboard")
+            }
+        }
+    },[details, router, user])
     useEffect(() => {
         socket.on("updation-tournament-public", userJoinedTournament)
 

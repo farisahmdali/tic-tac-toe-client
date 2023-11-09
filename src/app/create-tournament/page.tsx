@@ -42,7 +42,7 @@ function Page() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(hostDetails.amount*100<=user?.credit){
+    if(hostDetails.amount*100<=user?.credit || hostDetails?.amount<1){
       const res = dispatch(hostTournament(hostDetails));
       res.then((res: any) => {
         if (hostDetails?.instant) {
@@ -92,6 +92,7 @@ function Page() {
             <input
               type="number"
               placeholder="Amount"
+              min={0}
               className="block border border-grey-light w-full p-1 rounded mb-4"
               required
               onChange={(e) =>

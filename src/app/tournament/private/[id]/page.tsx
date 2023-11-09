@@ -70,6 +70,12 @@ function Page({ params }: { params: { id: string } }) {
         const res = dispatch(getTournamentsDetails(params.id))
         res.then((x: any) => {
             setDetails(x?.payload)
+            if(user&&x?.payload?.amount>0){
+                if(user?.credit/100<=x?.payload?.amount  || !user?.credit){
+                    toast.showToast("No enough Balance","red")
+                    router.replace("/dashboard")
+                }
+            }
         })
         if (user) {
 
@@ -94,6 +100,16 @@ function Page({ params }: { params: { id: string } }) {
 
         }
     }, [socket])
+
+    useEffect(()=>{
+        console.log(user,details?.amount)
+        if(user&&details?.amount>0){
+            if(user?.credit/100<=details?.amount  || !user?.credit   ){
+                toast.showToast("No Enough Balance","red")
+                router.replace("/dashboard")
+            }
+        }
+    },[details, router, user])
 
     useEffect(() => {
         setInterval(() => {

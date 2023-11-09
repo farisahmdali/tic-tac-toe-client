@@ -46,7 +46,7 @@ function Loading() {
   }, [user, error, route, dispatch])
   const expecetional = ["/signup"]
   useEffect(() => {
-    if(expecetional.includes(path))
+    if(!expecetional.includes(path))
     {if (Cookies.get("token") && !user ) {
       dispatch(getUser());
     } else {
